@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import UploadZone from "./UploadZone";
 import PageSplitter from "./PageSplitter";
 import { splitPDF } from "@/lib/pdf-processing";
@@ -60,8 +60,10 @@ function PDFSplitEditorContent() {
         }
     };
 
+    // No longer need containerRef/width state here, as PageSplitter handles its own sizing.
+
     return (
-        <div className="max-w-[1400px] mx-auto p-6 min-h-screen pb-20">
+        <div className="max-w-[1400px] mx-auto p-4 sm:p-6 min-h-screen pb-20">
             <LanguageSelector />
             <div className="mb-8 text-center space-y-2 pt-8">
                 <h1 className="text-3xl font-bold tracking-tight text-gray-900">{t.title}</h1>
@@ -73,17 +75,17 @@ function PDFSplitEditorContent() {
             ) : (
                 <div className="space-y-6">
                     <div className="sticky top-4 z-50 flex flex-col sm:flex-row justify-between items-center bg-white/80 backdrop-blur-md p-4 rounded-xl shadow-lg border border-gray-100 mb-8 transition-all">
-                        <div className="flex items-center gap-3 mb-3 sm:mb-0">
-                            <span className="font-semibold text-gray-800 truncate max-w-[200px]">{file.name}</span>
-                            <span className="text-xs px-2.5 py-1 bg-gray-100 rounded-full text-gray-500 font-medium">
+                        <div className="flex items-center gap-3 mb-3 sm:mb-0 max-w-full overflow-hidden">
+                            <span className="font-semibold text-gray-800 truncate max-w-[150px] sm:max-w-[200px]">{file.name}</span>
+                            <span className="text-xs px-2.5 py-1 bg-gray-100 rounded-full text-gray-500 font-medium whitespace-nowrap">
                                 {(file.size / 1024 / 1024).toFixed(2)} MB
                             </span>
-                            <span className="text-xs px-2.5 py-1 bg-blue-50 text-blue-600 rounded-full font-medium">
+                            <span className="text-xs px-2.5 py-1 bg-blue-50 text-blue-600 rounded-full font-medium whitespace-nowrap">
                                 {t.meta.pageCount.replace('{n}', numPages.toString())}
                             </span>
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
                             <button
                                 onClick={() => setFile(null)}
                                 className="text-sm text-gray-500 hover:text-gray-700 font-medium px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -108,11 +110,12 @@ function PDFSplitEditorContent() {
                         </div>
                     </div>
 
-                    <div className="flex justify-center">
+                    {/* Remove ref={containerRef} as we don't need to measure this outer container anymore */}
+                    <div className="flex justify-center w-full">
                         <Document
                             file={file}
                             onLoadSuccess={onDocumentLoadSuccess}
-                            className="flex flex-col gap-8 w-full max-w-6xl"
+                            className="flex flex-col gap-8 w-full"
                             loading={
                                 <div className="p-12 text-center text-gray-400 animate-pulse">
                                     {t.items.loading}
@@ -123,7 +126,7 @@ function PDFSplitEditorContent() {
                                 <PageSplitter
                                     key={`page_${index + 1}`}
                                     pageNumber={index + 1}
-                                    width={1200} // Increased width for better visibility
+                                    width={undefined} // PageSplitter measures itself
                                     splitPosition={splitPositions[index + 1] ?? 50}
                                     onSplitChange={(pos) => handleSplitChange(index + 1, pos)}
                                 />
