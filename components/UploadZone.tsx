@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { Upload } from "lucide-react";
 
 import { useLanguage } from "./LanguageContext";
@@ -12,6 +12,7 @@ interface UploadZoneProps {
 export default function UploadZone({ onFileSelect }: UploadZoneProps) {
   const { t } = useLanguage();
   const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // ... (drag handlers same logic)
 
@@ -60,14 +61,16 @@ export default function UploadZone({ onFileSelect }: UploadZoneProps) {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      onClick={() => document.getElementById("file-upload")?.click()}
+      onClick={() => fileInputRef.current?.click()}
     >
       <input
+        ref={fileInputRef}
         id="file-upload"
         type="file"
         accept="application/pdf"
         className="hidden"
         onChange={handleFileInput}
+        onClick={(event) => event.stopPropagation()}
       />
 
       <div className="flex flex-col items-center gap-4">

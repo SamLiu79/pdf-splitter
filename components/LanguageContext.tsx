@@ -22,7 +22,13 @@ function detectInitialLanguage(): Language {
         return defaultLanguage;
     }
 
-    const savedLang = window.localStorage.getItem('pdf-split-lang');
+    let savedLang: string | null = null;
+    try {
+        savedLang = window.localStorage.getItem('pdf-split-lang');
+    } catch {
+        savedLang = null;
+    }
+
     if (isLanguage(savedLang)) {
         return savedLang;
     }
@@ -46,7 +52,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }, [language]);
 
     useEffect(() => {
-        localStorage.setItem('pdf-split-lang', language);
+        try {
+            localStorage.setItem('pdf-split-lang', language);
+        } catch {
+            // Storage can be unavailable in restricted browser contexts.
+        }
     }, [language]);
 
     const changeLanguage = (lang: Language) => {
