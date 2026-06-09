@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Upload, FileUp } from "lucide-react";
+import { Upload } from "lucide-react";
 
 import { useLanguage } from "./LanguageContext";
 
