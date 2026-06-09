@@ -6,8 +6,11 @@ export type PageSplitConfig = { mode: SplitMode; splitPoints: number[] };
 export function normalizeSplitPoints(config: PageSplitConfig | undefined): number[] {
     const mode = config?.mode ?? 2;
     const defaultSplitPoints = mode === 3 ? [33.3, 66.7] : [50];
-    const splitPoints = config?.splitPoints?.length ? config.splitPoints : defaultSplitPoints;
     const pointCount = mode === 3 ? 2 : 1;
+    const splitPoints = [
+        ...(config?.splitPoints ?? []),
+        ...defaultSplitPoints,
+    ];
 
     return splitPoints
         .slice(0, pointCount)

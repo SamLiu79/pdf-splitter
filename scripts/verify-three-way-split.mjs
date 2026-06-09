@@ -15,4 +15,8 @@ assert.equal(outputPdf.getPageCount(), 3);
 const widths = outputPdf.getPages().map((page) => Math.round(page.getMediaBox().width));
 assert.deepEqual(widths, [250, 450, 300]);
 
+const partialOutputBytes = await splitPDF(sourceFile, { 1: { mode: 3, splitPoints: [25] } });
+const partialOutputPdf = await PDFDocument.load(partialOutputBytes);
+assert.equal(partialOutputPdf.getPageCount(), 3);
+
 console.log('three-way split verification passed');
