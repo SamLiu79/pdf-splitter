@@ -11,39 +11,56 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+const defaultLanguage: Language = 'zh';
+
+function isLanguage(value: string | null): value is Language {
+    return value !== null && value in translations;
+}
+
+function detectInitialLanguage(): Language {
+    if (typeof window === 'undefined') {
+        return defaultLanguage;
+    }
+
+    let savedLang: string | null = null;
+    try {
+        savedLang = window.localStorage.getItem('pdf-split-lang');
+    } catch {
+        savedLang = null;
+    }
+
+    if (isLanguage(savedLang)) {
+        return savedLang;
+    }
+
+    const browserLang = window.navigator.language.toLowerCase();
+    if (browserLang.startsWith('en')) return 'en';
+    if (browserLang.startsWith('ja')) return 'ja';
+    if (browserLang.startsWith('ko')) return 'ko';
+    if (browserLang.startsWith('es')) return 'es';
+    if (browserLang.startsWith('ru')) return 'ru';
+    if (browserLang.startsWith('zh')) return 'zh';
+
+    return defaultLanguage;
+}
+
 export function LanguageProvider({ children }: { children: ReactNode }) {
-    const [language, setLanguage] = useState<Language>('zh');
+    const [language, setLanguage] = useState<Language>(detectInitialLanguage);
 
     useEffect(() => {
-        // Update document title based on language
         document.title = translations[language].title;
     }, [language]);
 
     useEffect(() => {
-        // 1. Check LocalStorage
-        const savedLang = localStorage.getItem('pdf-split-lang') as Language;
-        if (savedLang && translations[savedLang]) {
-            setLanguage(savedLang);
-            return;
+        try {
+            localStorage.setItem('pdf-split-lang', language);
+        } catch {
+            // Storage can be unavailable in restricted browser contexts.
         }
-
-        // 2. Check Browser
-        const browserLang = navigator.language.toLowerCase();
-        let detected: Language = 'zh';
-
-        if (browserLang.startsWith('en')) detected = 'en';
-        else if (browserLang.startsWith('ja')) detected = 'ja';
-        else if (browserLang.startsWith('ko')) detected = 'ko';
-        else if (browserLang.startsWith('es')) detected = 'es';
-        else if (browserLang.startsWith('ru')) detected = 'ru';
-        else if (browserLang.startsWith('zh')) detected = 'zh';
-
-        setLanguage(detected);
-    }, []);
+    }, [language]);
 
     const changeLanguage = (lang: Language) => {
         setLanguage(lang);
-        localStorage.setItem('pdf-split-lang', lang);
     };
 
     const value = {

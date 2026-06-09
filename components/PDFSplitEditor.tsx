@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState } from "react";
 import UploadZone from "./UploadZone";
 import PageSplitter from "./PageSplitter";
-import { splitPDF } from "@/lib/pdf-processing";
+import { PageSplitConfig, SplitMode, splitPDF } from "@/lib/pdf-processing";
 import { pdfjs, Document } from "react-pdf";
 import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
@@ -18,32 +18,53 @@ function PDFSplitEditorContent() {
     const { t } = useLanguage();
     const [file, setFile] = useState<File | null>(null);
     const [numPages, setNumPages] = useState<number>(0);
-    const [splitPositions, setSplitPositions] = useState<Record<number, number>>({});
+    const [splitConfigs, setSplitConfigs] = useState<Record<number, PageSplitConfig>>({});
     const [isProcessing, setIsProcessing] = useState(false);
 
     function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
         setNumPages(numPages);
-        // Initialize standard split capability
-        const initialSplits: Record<number, number> = {};
+        const initialSplits: Record<number, PageSplitConfig> = {};
         for (let i = 1; i <= numPages; i++) {
-            initialSplits[i] = 50;
+            initialSplits[i] = { mode: 2, splitPoints: [50] };
         }
-        setSplitPositions(initialSplits);
+        setSplitConfigs(initialSplits);
     }
 
-    const handleSplitChange = (page: number, newPos: number) => {
-        setSplitPositions(prev => ({
+    const handleSplitPointsChange = (page: number, splitPoints: number[]) => {
+        setSplitConfigs(prev => ({
             ...prev,
-            [page]: newPos
+            [page]: {
+                mode: splitPoints.length === 2 ? 3 : 2,
+                splitPoints,
+            },
         }));
+    };
+
+    const handleSplitModeChange = (page: number, mode: SplitMode) => {
+        setSplitConfigs(prev => {
+            const current = prev[page] ?? { mode: 2, splitPoints: [50] };
+            const splitPoints = mode === 3
+                ? [33.3, 66.7]
+                : [
+                    current.splitPoints.length === 2
+                        ? (current.splitPoints[0] + current.splitPoints[1]) / 2
+                        : current.splitPoints[0] ?? 50
+                ];
+
+            return {
+                ...prev,
+                [page]: { mode, splitPoints },
+            };
+        });
     };
 
     const handleDownload = async () => {
         if (!file) return;
         setIsProcessing(true);
         try {
-            const newPdfBytes = await splitPDF(file, splitPositions);
-            const blob = new Blob([newPdfBytes as any], { type: "application/pdf" });
+            const newPdfBytes = await splitPDF(file, splitConfigs);
+            const pdfBytes = new Uint8Array(newPdfBytes);
+            const blob = new Blob([pdfBytes.buffer], { type: "application/pdf" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
@@ -122,15 +143,21 @@ function PDFSplitEditorContent() {
                                 </div>
                             }
                         >
-                            {Array.from(new Array(numPages), (el, index) => (
-                                <PageSplitter
-                                    key={`page_${index + 1}`}
-                                    pageNumber={index + 1}
-                                    width={undefined} // PageSplitter measures itself
-                                    splitPosition={splitPositions[index + 1] ?? 50}
-                                    onSplitChange={(pos) => handleSplitChange(index + 1, pos)}
-                                />
-                            ))}
+                            {Array.from(new Array(numPages), (el, index) => {
+                                const pageNumber = index + 1;
+                                const pageConfig = splitConfigs[pageNumber] ?? { mode: 2, splitPoints: [50] };
+
+                                return (
+                                    <PageSplitter
+                                        key={`page_${pageNumber}`}
+                                        pageNumber={pageNumber}
+                                        width={undefined} // PageSplitter measures itself
+                                        splitConfig={pageConfig}
+                                        onSplitPointsChange={(points) => handleSplitPointsChange(pageNumber, points)}
+                                        onSplitModeChange={(mode) => handleSplitModeChange(pageNumber, mode)}
+                                    />
+                                );
+                            })}
                         </Document>
                     </div>
                 </div>

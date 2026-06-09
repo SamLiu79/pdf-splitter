@@ -1,12 +1,30 @@
-import { PDFDocument, PageSizes } from 'pdf-lib';
+import { PDFDocument } from 'pdf-lib';
+
+export type SplitMode = 2 | 3;
+export type PageSplitConfig = { mode: SplitMode; splitPoints: number[] };
+
+export function normalizeSplitPoints(config: PageSplitConfig | undefined): number[] {
+    const mode = config?.mode ?? 2;
+    const defaultSplitPoints = mode === 3 ? [33.3, 66.7] : [50];
+    const pointCount = mode === 3 ? 2 : 1;
+    const splitPoints = [
+        ...(config?.splitPoints ?? []),
+        ...defaultSplitPoints,
+    ];
+
+    return splitPoints
+        .slice(0, pointCount)
+        .map((point) => Math.min(100, Math.max(0, point)))
+        .sort((a, b) => a - b);
+}
 
 /**
- * Splits a PDF file based on the provided split positions.
+ * Splits a PDF file based on the provided page split configs.
  * @param file The original PDF file.
- * @param splitPositions A map of page number (1-based) to split percentage (0-100).
+ * @param splitConfigs A map of page number (1-based) to split mode and split points.
  * @returns The generated PDF bytes.
  */
-export async function splitPDF(file: File, splitPositions: Record<number, number>): Promise<Uint8Array> {
+export async function splitPDF(file: File, splitConfigs: Record<number, PageSplitConfig>): Promise<Uint8Array> {
     const fileArrayBuffer = await file.arrayBuffer();
     const pdfDoc = await PDFDocument.load(fileArrayBuffer);
     const newPdfDoc = await PDFDocument.create();
@@ -15,40 +33,28 @@ export async function splitPDF(file: File, splitPositions: Record<number, number
 
     for (let i = 0; i < pageCount; i++) {
         const pageNum = i + 1;
-        const splitPercentage = splitPositions[pageNum] ?? 50;
-        const splitRatio = splitPercentage / 100;
+        const splitPoints = normalizeSplitPoints(splitConfigs[pageNum]);
+        const boundaries = [0, ...splitPoints, 100];
 
-        // Load the page
-        // Load the page
         const [originalPage] = await newPdfDoc.copyPages(pdfDoc, [i]);
 
         // Get the effective visible box (CropBox takes precedence over MediaBox)
         const box = originalPage.getCropBox() ?? originalPage.getMediaBox();
         const { x, y, width, height } = box;
 
-        const splitPoint = x + (width * splitRatio);
-        console.log(`[Page ${pageNum}] Box: x=${x}, y=${y}, w=${width}, h=${height}`);
-        console.log(`[Page ${pageNum}] Split Ratio: ${splitRatio.toFixed(3)} (${splitPercentage}%)`);
-        console.log(`[Page ${pageNum}] Split Coordinate: ${splitPoint.toFixed(2)}`);
+        for (let boundaryIndex = 0; boundaryIndex < boundaries.length - 1; boundaryIndex++) {
+            const startPercentage = boundaries[boundaryIndex];
+            const endPercentage = boundaries[boundaryIndex + 1];
+            const segmentX = x + (width * startPercentage / 100);
+            const segmentWidth = width * (endPercentage - startPercentage) / 100;
+            const [segmentPage] = await newPdfDoc.copyPages(pdfDoc, [i]);
 
-        // Create left page
-        const [leftPage] = await newPdfDoc.copyPages(pdfDoc, [i]);
-        // Set MediaBox/CropBox to the left portion
-        // NOTE: setMediaBox(x, y, width, height) - width/height are lengths, x/y are origin.
-        // So for left page: origin is (x, y), width is width*ratio, height is height.
-        leftPage.setMediaBox(x, y, width * splitRatio, height);
-        leftPage.setCropBox(x, y, width * splitRatio, height);
-        newPdfDoc.addPage(leftPage);
-
-        // Create right page
-        const [rightPage] = await newPdfDoc.copyPages(pdfDoc, [i]);
-        // For right page: origin is (x + width*ratio, y), width is width*(1-ratio)
-        rightPage.setMediaBox(x + (width * splitRatio), y, width - (width * splitRatio), height);
-        rightPage.setCropBox(x + (width * splitRatio), y, width - (width * splitRatio), height);
-        newPdfDoc.addPage(rightPage);
+            segmentPage.setMediaBox(segmentX, y, segmentWidth, height);
+            segmentPage.setCropBox(segmentX, y, segmentWidth, height);
+            newPdfDoc.addPage(segmentPage);
+        }
     }
 
     const pdfBytes = await newPdfDoc.save();
     return pdfBytes;
 }
-
