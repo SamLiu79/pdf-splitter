@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PDF Page Divider",
+  title: "PDF Page Splitter",
   description: "Upload your A3 PDF and split pages easily / 上傳您的 A3 PDF 文件並輕鬆分割頁面",
 };
 
