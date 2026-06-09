@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Page } from "react-pdf";
-import type { PageCallback } from "react-pdf";
 import type { PageSplitConfig, SplitMode } from "@/lib/pdf-processing";
 
 import { GripVertical, ZoomIn, ZoomOut, Maximize } from "lucide-react";
@@ -10,6 +9,11 @@ import { GripVertical, ZoomIn, ZoomOut, Maximize } from "lucide-react";
 import { useLanguage } from "./LanguageContext";
 
 const MIN_SEGMENT_PERCENT = 10;
+
+type LoadedPage = {
+    originalWidth: number;
+    originalHeight: number;
+};
 
 interface PageSplitterProps {
     pageNumber: number;
@@ -117,7 +121,7 @@ export default function PageSplitter({
 
     const [pageDimensions, setPageDimensions] = useState<{ width: number; height: number } | null>(null);
 
-    const onPageLoadSuccess = (page: PageCallback) => {
+    const onPageLoadSuccess = (page: LoadedPage) => {
         // page.originalWidth/originalHeight are in PDF points (72dpi usually)
         setPageDimensions({ width: page.originalWidth, height: page.originalHeight });
     };
