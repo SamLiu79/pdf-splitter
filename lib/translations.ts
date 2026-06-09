@@ -23,6 +23,9 @@ export const translations = {
             orig: "原始尺寸",
             left: "左侧",
             right: "右侧",
+            twoWaySplit: "二等分",
+            threeWaySplit: "三等分",
+            segment: "分段",
         },
         meta: {
             pageCount: "{n} 页",
@@ -50,6 +53,9 @@ export const translations = {
             orig: "Orig",
             left: "Left",
             right: "Right",
+            twoWaySplit: "2-way split",
+            threeWaySplit: "3-way split",
+            segment: "Segment",
         },
         meta: {
             pageCount: "{n} Pages",
@@ -77,6 +83,9 @@ export const translations = {
             orig: "元",
             left: "左",
             right: "右",
+            twoWaySplit: "2分割",
+            threeWaySplit: "3分割",
+            segment: "区間",
         },
         meta: {
             pageCount: "{n} ページ",
@@ -104,6 +113,9 @@ export const translations = {
             orig: "원본",
             left: "왼쪽",
             right: "오른쪽",
+            twoWaySplit: "2분할",
+            threeWaySplit: "3분할",
+            segment: "구간",
         },
         meta: {
             pageCount: "{n} 페이지",
@@ -131,6 +143,9 @@ export const translations = {
             orig: "Orig",
             left: "Izq",
             right: "Der",
+            twoWaySplit: "División en 2",
+            threeWaySplit: "División en 3",
+            segment: "Segmento",
         },
         meta: {
             pageCount: "{n} Páginas",
@@ -158,6 +173,9 @@ export const translations = {
             orig: "Ориг",
             left: "Лев",
             right: "Прав",
+            twoWaySplit: "Деление на 2",
+            threeWaySplit: "Деление на 3",
+            segment: "Сегмент",
         },
         meta: {
             pageCount: "{n} Стр.",
