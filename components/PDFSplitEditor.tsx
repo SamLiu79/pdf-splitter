@@ -102,8 +102,8 @@ function PDFSplitEditorContent() {
             ) : (
                 <div className="space-y-6">
                     <div className={floatingToolbarClass}>
-                        <div className="flex items-center gap-3 mb-3 sm:mb-0 max-w-full overflow-hidden">
-                            <span className="font-semibold text-brand truncate max-w-[150px] sm:max-w-[200px]">{file.name}</span>
+                        <div className="flex items-center gap-3 mb-3 sm:mb-0 max-w-full sm:flex-1 overflow-hidden">
+                            <span className="font-semibold text-brand truncate max-w-[240px] sm:max-w-[420px] lg:max-w-[620px]">{file.name}</span>
                             <span className="text-xs px-2.5 py-1 bg-panel rounded-full text-muted-copy font-medium whitespace-nowrap">
                                 {(file.size / 1024 / 1024).toFixed(2)} MB
                             </span>
