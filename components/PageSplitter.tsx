@@ -212,28 +212,11 @@ export default function PageSplitter({
                                 onMouseDown={(event) => handlePointerStart(event, splitIndex)}
                                 onTouchStart={(event) => handlePointerStart(event, splitIndex)}
                             >
-                                {/* Handle */}
                                 <div className={splitHandleClass}>
                                     <GripVertical className="w-3.5 h-3.5 text-brand" />
                                 </div>
-
-                                {/* Guide Line Shadow/Glow */}
-                                <div className="absolute inset-y-0 left-1/2 -z-10 w-4 -translate-x-1/2 bg-page/70" />
                             </div>
                         ))}
-
-                        {/* Visual Tint (Optional: Tint right side slightly to indicate split) */}
-                        {displayedSplitPoints.map((point, index) => {
-                            const nextPoint = displayedSplitPoints[index + 1] ?? 100;
-
-                            return (
-                                <div
-                                    key={index}
-                                    className="absolute inset-y-0 bg-accent/12 pointer-events-none"
-                                    style={{ left: `${point}%`, width: `${nextPoint - point}%` }}
-                                />
-                            );
-                        })}
                     </div>
                 </div>
             </div>
