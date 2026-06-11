@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PDF Page Splitter
 
-## Getting Started
+PDF Page Splitter is a browser-based tool for uploading an A3 PDF, previewing
+each page, and exporting the document as split pages. It supports two-way and
+three-way page splitting, including draggable split positions per page.
 
-First, run the development server:
+## Development
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Useful checks:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npx tsc --noEmit
+node --experimental-strip-types scripts/verify-three-way-split.mjs
+```
 
-## Learn More
+## License
 
-To learn more about Next.js, take a look at the following resources:
+This repository's original source code is licensed under the
+[PolyForm Noncommercial License 1.0.0](./LICENSE).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This is a source-available noncommercial license, not an OSI-approved open
+source license.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+You may use, copy, modify, and distribute this project for noncommercial
+purposes under the license terms. Commercial use is not permitted by the public
+license.
 
-## Deploy on Vercel
+If you want to use this project or a modified version of it commercially,
+contact SamLiu79 for a separate commercial license.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Third-party dependencies remain under their own licenses. See
+[THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).
