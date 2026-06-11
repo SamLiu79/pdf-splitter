@@ -9,6 +9,12 @@ interface UploadZoneProps {
   onFileSelect: (file: File) => void;
 }
 
+const uploadZoneBaseClass = "relative border-2 border-dashed rounded-xl p-12 text-center transition-colors cursor-pointer";
+const uploadZoneIdleClass = "border-hairline hover:border-muted-copy hover:bg-panel/75";
+const uploadZoneDraggingClass = "border-accent bg-subtle-surface/75";
+const uploadIconIdleClass = "bg-panel text-muted-copy";
+const uploadIconDraggingClass = "bg-accent text-brand";
+
 export default function UploadZone({ onFileSelect }: UploadZoneProps) {
   const { t } = useLanguage();
   const [isDragging, setIsDragging] = useState(false);
@@ -52,12 +58,7 @@ export default function UploadZone({ onFileSelect }: UploadZoneProps) {
 
   return (
     <div
-      className={`relative border-2 border-dashed rounded-xl p-12 text-center transition-colors cursor-pointer
-        ${isDragging
-          ? "border-blue-500 bg-blue-50/50"
-          : "border-gray-300 hover:border-gray-400 hover:bg-gray-50/50"
-        }
-      `}
+      className={`${uploadZoneBaseClass} ${isDragging ? uploadZoneDraggingClass : uploadZoneIdleClass}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -74,14 +75,14 @@ export default function UploadZone({ onFileSelect }: UploadZoneProps) {
       />
 
       <div className="flex flex-col items-center gap-4">
-        <div className={`p-4 rounded-full ${isDragging ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"}`}>
+        <div className={`p-4 rounded-full ${isDragging ? uploadIconDraggingClass : uploadIconIdleClass}`}>
           <Upload className="w-8 h-8" />
         </div>
         <div className="space-y-1">
-          <p className="text-lg font-medium text-gray-900">
+          <p className="text-lg font-medium text-brand">
             {isDragging ? t.upload.dropHere : t.upload.clickOrDrag}
           </p>
-          <p className="text-sm text-gray-500">{t.upload.hint}</p>
+          <p className="text-sm text-muted-copy">{t.upload.hint}</p>
         </div>
       </div>
     </div>
