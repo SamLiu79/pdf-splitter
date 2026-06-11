@@ -4,6 +4,7 @@ import { useState, useCallback, useRef } from "react";
 import { Upload } from "lucide-react";
 
 import { useLanguage } from "./LanguageContext";
+import { validatePdfFile } from "@/lib/upload-validation";
 
 interface UploadZoneProps {
   onFileSelect: (file: File) => void;
@@ -20,7 +21,16 @@ export default function UploadZone({ onFileSelect }: UploadZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // ... (drag handlers same logic)
+  const selectFile = useCallback((file: File) => {
+    const validation = validatePdfFile(file);
+
+    if (validation.valid) {
+      onFileSelect(file);
+      return;
+    }
+
+    alert(validation.reason === "file-too-large" ? t.upload.tooLarge : t.upload.alert);
+  }, [onFileSelect, t]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -37,23 +47,24 @@ export default function UploadZone({ onFileSelect }: UploadZoneProps) {
       e.preventDefault();
       setIsDragging(false);
       const files = e.dataTransfer.files;
-      if (files.length > 0 && files[0].type === "application/pdf") {
-        onFileSelect(files[0]);
+      if (files.length > 0) {
+        selectFile(files[0]);
       } else {
         alert(t.upload.alert);
       }
     },
-    [onFileSelect, t]
+    [selectFile, t]
   );
 
   const handleFileInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files;
-      if (files && files.length > 0 && files[0].type === "application/pdf") {
-        onFileSelect(files[0]);
+      if (files && files.length > 0) {
+        selectFile(files[0]);
       }
+      e.target.value = "";
     },
-    [onFileSelect]
+    [selectFile]
   );
 
   return (

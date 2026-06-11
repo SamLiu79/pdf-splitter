@@ -103,6 +103,7 @@ export default function PageSplitter({
 
         const handleTouchMove = (e: TouchEvent) => {
             e.preventDefault();
+            if (e.touches.length === 0) return;
             handleMove(e.touches[0].clientX);
         };
 
@@ -116,12 +117,14 @@ export default function PageSplitter({
         window.addEventListener("mouseup", handleEnd);
         window.addEventListener("touchmove", handleTouchMove, { passive: false });
         window.addEventListener("touchend", handleEnd);
+        window.addEventListener("touchcancel", handleEnd);
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("mouseup", handleEnd);
             window.removeEventListener("touchmove", handleTouchMove);
             window.removeEventListener("touchend", handleEnd);
+            window.removeEventListener("touchcancel", handleEnd);
         };
     }, [isDragging]);
 

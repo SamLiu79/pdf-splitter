@@ -9,6 +9,7 @@ export const translations = {
             clickOrDrag: "点击上传或拖放文件",
             hint: "仅支持 PDF 文件 (最大 50MB)",
             alert: "请上传 PDF 文件。",
+            tooLarge: "PDF 文件不能超过 50MB。",
         },
         actions: {
             changeFile: "更换文件",
@@ -41,6 +42,7 @@ export const translations = {
             clickOrDrag: "Click to upload or drag and drop",
             hint: "PDF files only (max 50MB)",
             alert: "Please upload a PDF file.",
+            tooLarge: "PDF files must be 50MB or smaller.",
         },
         actions: {
             changeFile: "Change File",
@@ -73,6 +75,7 @@ export const translations = {
             clickOrDrag: "クリックしてアップロード、またはドラッグ＆ドロップ",
             hint: "PDFファイルのみ (最大 50MB)",
             alert: "PDFファイルをアップロードしてください。",
+            tooLarge: "PDFファイルは50MB以下にしてください。",
         },
         actions: {
             changeFile: "ファイルを変更",
@@ -105,6 +108,7 @@ export const translations = {
             clickOrDrag: "클릭하여 업로드하거나 드래그 앤 드롭",
             hint: "PDF 파일만 가능 (최대 50MB)",
             alert: "PDF 파일을 업로드해주세요.",
+            tooLarge: "PDF 파일은 50MB 이하여야 합니다.",
         },
         actions: {
             changeFile: "파일 변경",
@@ -137,6 +141,7 @@ export const translations = {
             clickOrDrag: "Haz clic para subir o arrastra y suelta",
             hint: "Solo archivos PDF (máx. 50MB)",
             alert: "Por favor, sube un archivo PDF.",
+            tooLarge: "El archivo PDF debe ser de 50MB o menos.",
         },
         actions: {
             changeFile: "Cambiar archivo",
@@ -169,6 +174,7 @@ export const translations = {
             clickOrDrag: "Нажмите для загрузки или перетащите",
             hint: "Только файлы PDF (макс. 50 МБ)",
             alert: "Пожалуйста, загрузите файл PDF.",
+            tooLarge: "PDF-файл должен быть не больше 50 МБ.",
         },
         actions: {
             changeFile: "Изменить файл",

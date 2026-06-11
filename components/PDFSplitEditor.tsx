@@ -10,6 +10,7 @@ import "react-pdf/dist/Page/AnnotationLayer.css";
 import { Loader2 } from "lucide-react";
 import { LanguageProvider, useLanguage } from "./LanguageContext";
 import LanguageSelector from "./LanguageSelector";
+import { getSplitOutputFilename } from "@/lib/upload-validation";
 
 // Configure worker locally
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -73,7 +74,7 @@ function PDFSplitEditorContent() {
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = `splitted-${file.name}`;
+            a.download = getSplitOutputFilename(file.name);
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
