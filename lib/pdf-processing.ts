@@ -18,6 +18,50 @@ export function normalizeSplitPoints(config: PageSplitConfig | undefined): numbe
         .sort((a, b) => a - b);
 }
 
+function normalizeRotation(angle: number): 0 | 90 | 180 | 270 {
+    const normalized = ((angle % 360) + 360) % 360;
+    return normalized === 90 || normalized === 180 || normalized === 270 ? normalized : 0;
+}
+
+function getVisualSplitSegments(
+    box: { x: number; y: number; width: number; height: number },
+    rotation: 0 | 90 | 180 | 270,
+    boundaries: number[]
+) {
+    const segments = [];
+
+    for (let boundaryIndex = 0; boundaryIndex < boundaries.length - 1; boundaryIndex++) {
+        const startPercentage = boundaries[boundaryIndex];
+        const endPercentage = boundaries[boundaryIndex + 1];
+
+        if (rotation === 90 || rotation === 270) {
+            const segmentStart = rotation === 270 ? 100 - endPercentage : startPercentage;
+            const segmentEnd = rotation === 270 ? 100 - startPercentage : endPercentage;
+            const segmentY = box.y + (box.height * segmentStart / 100);
+            const segmentHeight = box.height * (segmentEnd - segmentStart) / 100;
+            segments.push({
+                x: box.x,
+                y: segmentY,
+                width: box.width,
+                height: segmentHeight,
+            });
+        } else {
+            const segmentStart = rotation === 180 ? 100 - endPercentage : startPercentage;
+            const segmentEnd = rotation === 180 ? 100 - startPercentage : endPercentage;
+            const segmentX = box.x + (box.width * segmentStart / 100);
+            const segmentWidth = box.width * (segmentEnd - segmentStart) / 100;
+            segments.push({
+                x: segmentX,
+                y: box.y,
+                width: segmentWidth,
+                height: box.height,
+            });
+        }
+    }
+
+    return segments;
+}
+
 /**
  * Splits a PDF file based on the provided page split configs.
  * @param file The original PDF file.
@@ -40,17 +84,14 @@ export async function splitPDF(file: File, splitConfigs: Record<number, PageSpli
 
         // Get the effective visible box (CropBox takes precedence over MediaBox)
         const box = originalPage.getCropBox() ?? originalPage.getMediaBox();
-        const { x, y, width, height } = box;
+        const rotation = normalizeRotation(originalPage.getRotation().angle);
+        const segments = getVisualSplitSegments(box, rotation, boundaries);
 
-        for (let boundaryIndex = 0; boundaryIndex < boundaries.length - 1; boundaryIndex++) {
-            const startPercentage = boundaries[boundaryIndex];
-            const endPercentage = boundaries[boundaryIndex + 1];
-            const segmentX = x + (width * startPercentage / 100);
-            const segmentWidth = width * (endPercentage - startPercentage) / 100;
+        for (const segment of segments) {
             const [segmentPage] = await newPdfDoc.copyPages(pdfDoc, [i]);
 
-            segmentPage.setMediaBox(segmentX, y, segmentWidth, height);
-            segmentPage.setCropBox(segmentX, y, segmentWidth, height);
+            segmentPage.setMediaBox(segment.x, segment.y, segment.width, segment.height);
+            segmentPage.setCropBox(segment.x, segment.y, segment.width, segment.height);
             newPdfDoc.addPage(segmentPage);
         }
     }
