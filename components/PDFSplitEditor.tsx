@@ -11,6 +11,7 @@ import { Loader2 } from "lucide-react";
 import { LanguageProvider, useLanguage } from "./LanguageContext";
 import LanguageSelector from "./LanguageSelector";
 import { getSplitOutputFilename } from "@/lib/upload-validation";
+import WeChatContact from "./WeChatContact";
 
 // Configure worker locally
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -168,6 +169,8 @@ function PDFSplitEditorContent() {
                     </div>
                 </div>
             )}
+
+            <WeChatContact />
         </div>
     );
 }

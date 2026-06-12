@@ -32,6 +32,13 @@ export const translations = {
         },
         meta: {
             pageCount: "{n} 页",
+        },
+        contact: {
+            wechat: "微信联系",
+            title: "微信联系我",
+            description: "扫描二维码添加微信。",
+            qrAlt: "微信二维码",
+            close: "关闭",
         }
     },
     en: {
@@ -65,6 +72,13 @@ export const translations = {
         },
         meta: {
             pageCount: "{n} Pages",
+        },
+        contact: {
+            wechat: "Contact on WeChat",
+            title: "Contact me on WeChat",
+            description: "Scan the QR code to add me on WeChat.",
+            qrAlt: "WeChat QR code",
+            close: "Close",
         }
     },
     ja: {
@@ -98,6 +112,13 @@ export const translations = {
         },
         meta: {
             pageCount: "{n} ページ",
+        },
+        contact: {
+            wechat: "WeChatで連絡",
+            title: "WeChatで連絡",
+            description: "QRコードをスキャンしてWeChatで追加してください。",
+            qrAlt: "WeChat QRコード",
+            close: "閉じる",
         }
     },
     ko: {
@@ -131,6 +152,13 @@ export const translations = {
         },
         meta: {
             pageCount: "{n} 페이지",
+        },
+        contact: {
+            wechat: "WeChat 연락",
+            title: "WeChat으로 연락",
+            description: "QR 코드를 스캔해 WeChat에 추가하세요.",
+            qrAlt: "WeChat QR 코드",
+            close: "닫기",
         }
     },
     es: {
@@ -164,6 +192,13 @@ export const translations = {
         },
         meta: {
             pageCount: "{n} Páginas",
+        },
+        contact: {
+            wechat: "Contactar por WeChat",
+            title: "Contáctame por WeChat",
+            description: "Escanea el código QR para agregarme en WeChat.",
+            qrAlt: "Código QR de WeChat",
+            close: "Cerrar",
         }
     },
     ru: {
@@ -197,6 +232,13 @@ export const translations = {
         },
         meta: {
             pageCount: "{n} Стр.",
+        },
+        contact: {
+            wechat: "Связаться в WeChat",
+            title: "Связаться со мной в WeChat",
+            description: "Отсканируйте QR-код, чтобы добавить меня в WeChat.",
+            qrAlt: "QR-код WeChat",
+            close: "Закрыть",
         }
     }
 };
