@@ -7,9 +7,9 @@ export const translations = {
         upload: {
             dropHere: "将 PDF 拖放到此处",
             clickOrDrag: "点击上传或拖放文件",
-            hint: "仅支持 PDF 文件 (最大 50MB)",
+            hint: "仅支持 PDF 文件 (最大 100MB)",
             alert: "请上传 PDF 文件。",
-            tooLarge: "PDF 文件不能超过 50MB。",
+            tooLarge: "PDF 文件不能超过 100MB。",
         },
         actions: {
             changeFile: "更换文件",
@@ -47,9 +47,9 @@ export const translations = {
         upload: {
             dropHere: "Drop your PDF here",
             clickOrDrag: "Click to upload or drag and drop",
-            hint: "PDF files only (max 50MB)",
+            hint: "PDF files only (max 100MB)",
             alert: "Please upload a PDF file.",
-            tooLarge: "PDF files must be 50MB or smaller.",
+            tooLarge: "PDF files must be 100MB or smaller.",
         },
         actions: {
             changeFile: "Change File",
@@ -87,9 +87,9 @@ export const translations = {
         upload: {
             dropHere: "PDFをここにドロップ",
             clickOrDrag: "クリックしてアップロード、またはドラッグ＆ドロップ",
-            hint: "PDFファイルのみ (最大 50MB)",
+            hint: "PDFファイルのみ (最大 100MB)",
             alert: "PDFファイルをアップロードしてください。",
-            tooLarge: "PDFファイルは50MB以下にしてください。",
+            tooLarge: "PDFファイルは100MB以下にしてください。",
         },
         actions: {
             changeFile: "ファイルを変更",
@@ -127,9 +127,9 @@ export const translations = {
         upload: {
             dropHere: "여기에 PDF 드롭",
             clickOrDrag: "클릭하여 업로드하거나 드래그 앤 드롭",
-            hint: "PDF 파일만 가능 (최대 50MB)",
+            hint: "PDF 파일만 가능 (최대 100MB)",
             alert: "PDF 파일을 업로드해주세요.",
-            tooLarge: "PDF 파일은 50MB 이하여야 합니다.",
+            tooLarge: "PDF 파일은 100MB 이하여야 합니다.",
         },
         actions: {
             changeFile: "파일 변경",
@@ -167,9 +167,9 @@ export const translations = {
         upload: {
             dropHere: "Suelta tu PDF aquí",
             clickOrDrag: "Haz clic para subir o arrastra y suelta",
-            hint: "Solo archivos PDF (máx. 50MB)",
+            hint: "Solo archivos PDF (máx. 100MB)",
             alert: "Por favor, sube un archivo PDF.",
-            tooLarge: "El archivo PDF debe ser de 50MB o menos.",
+            tooLarge: "El archivo PDF debe ser de 100MB o menos.",
         },
         actions: {
             changeFile: "Cambiar archivo",
@@ -207,9 +207,9 @@ export const translations = {
         upload: {
             dropHere: "Перетащите PDF сюда",
             clickOrDrag: "Нажмите для загрузки или перетащите",
-            hint: "Только файлы PDF (макс. 50 МБ)",
+            hint: "Только файлы PDF (макс. 100 МБ)",
             alert: "Пожалуйста, загрузите файл PDF.",
-            tooLarge: "PDF-файл должен быть не больше 50 МБ.",
+            tooLarge: "PDF-файл должен быть не больше 100 МБ.",
         },
         actions: {
             changeFile: "Изменить файл",

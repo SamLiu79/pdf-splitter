@@ -34,9 +34,9 @@ const invalidFile = {
   size: 1024,
 };
 
-assert(validatePdfFile(validPdf).valid, "50MB PDFs should be accepted");
+assert(validatePdfFile(validPdf).valid, "100MB PDFs should be accepted");
 assert(validatePdfFile(extensionOnlyPdf).valid, "PDF extension should be accepted when MIME type is unavailable");
-assert(validatePdfFile(oversizedPdf).reason === "file-too-large", "PDFs over 50MB should be rejected");
+assert(validatePdfFile(oversizedPdf).reason === "file-too-large", "PDFs over 100MB should be rejected");
 assert(validatePdfFile(invalidFile).reason === "invalid-type", "non-PDF files should be rejected");
 assert(getSplitOutputFilename("worksheet.pdf") === "split-worksheet.pdf", "download filename should use split- prefix");
 

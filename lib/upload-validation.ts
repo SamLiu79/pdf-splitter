@@ -1,4 +1,4 @@
-export const MAX_PDF_FILE_SIZE_BYTES = 50 * 1024 * 1024;
+export const MAX_PDF_FILE_SIZE_BYTES = 100 * 1024 * 1024;
 
 export type FileValidationReason = "invalid-type" | "file-too-large";
 
