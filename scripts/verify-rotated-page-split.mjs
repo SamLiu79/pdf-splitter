@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { PDFDocument, degrees } from "pdf-lib";
+import { PDFDocument, degrees } from "@cantoo/pdf-lib";
 import { splitPDF } from "../lib/pdf-processing.ts";
 
 async function splitSingleRotatedPage(rotation, splitPoints = [50]) {

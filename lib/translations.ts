@@ -16,6 +16,7 @@ export const translations = {
             cancel: "取消",
             processing: "处理中...",
             download: "下载文件",
+            splitFailed: "处理 PDF 失败，请检查文件后重试。",
         },
         items: {
             page: "第 {n} 页",
@@ -39,6 +40,14 @@ export const translations = {
             description: "扫描二维码添加微信。",
             qrAlt: "微信二维码",
             close: "关闭",
+        },
+        password: {
+            title: "此 PDF 受密码保护",
+            description: "请输入打开此文件的密码。",
+            incorrect: "密码错误，请重试。",
+            label: "密码",
+            submit: "确定",
+            cancel: "取消",
         }
     },
     en: {
@@ -56,6 +65,7 @@ export const translations = {
             cancel: "Cancel",
             processing: "Processing...",
             download: "Download Output",
+            splitFailed: "Could not process the PDF. Check the file and try again.",
         },
         items: {
             page: "Page {n}",
@@ -79,6 +89,14 @@ export const translations = {
             description: "Scan the QR code to add me on WeChat.",
             qrAlt: "WeChat QR code",
             close: "Close",
+        },
+        password: {
+            title: "This PDF is password protected",
+            description: "Enter the password that opens this file.",
+            incorrect: "Incorrect password. Please try again.",
+            label: "Password",
+            submit: "Unlock",
+            cancel: "Cancel",
         }
     },
     ja: {
@@ -96,6 +114,7 @@ export const translations = {
             cancel: "キャンセル",
             processing: "処理中...",
             download: "ダウンロード",
+            splitFailed: "PDFを処理できませんでした。ファイルを確認して再試行してください。",
         },
         items: {
             page: "{n} ページ",
@@ -119,6 +138,14 @@ export const translations = {
             description: "QRコードをスキャンしてWeChatで追加してください。",
             qrAlt: "WeChat QRコード",
             close: "閉じる",
+        },
+        password: {
+            title: "このPDFはパスワードで保護されています",
+            description: "このファイルを開くパスワードを入力してください。",
+            incorrect: "パスワードが正しくありません。もう一度お試しください。",
+            label: "パスワード",
+            submit: "解除",
+            cancel: "キャンセル",
         }
     },
     ko: {
@@ -136,6 +163,7 @@ export const translations = {
             cancel: "취소",
             processing: "처리 중...",
             download: "결과 다운로드",
+            splitFailed: "PDF를 처리할 수 없습니다. 파일을 확인한 후 다시 시도하세요.",
         },
         items: {
             page: "{n} 페이지",
@@ -159,6 +187,14 @@ export const translations = {
             description: "QR 코드를 스캔해 WeChat에 추가하세요.",
             qrAlt: "WeChat QR 코드",
             close: "닫기",
+        },
+        password: {
+            title: "이 PDF는 암호로 보호되어 있습니다",
+            description: "이 파일을 여는 암호를 입력하세요.",
+            incorrect: "암호가 올바르지 않습니다. 다시 시도하세요.",
+            label: "암호",
+            submit: "잠금 해제",
+            cancel: "취소",
         }
     },
     es: {
@@ -176,6 +212,7 @@ export const translations = {
             cancel: "Cancelar",
             processing: "Procesando...",
             download: "Descargar resultado",
+            splitFailed: "No se pudo procesar el PDF. Revisa el archivo e inténtalo de nuevo.",
         },
         items: {
             page: "Página {n}",
@@ -199,6 +236,14 @@ export const translations = {
             description: "Escanea el código QR para agregarme en WeChat.",
             qrAlt: "Código QR de WeChat",
             close: "Cerrar",
+        },
+        password: {
+            title: "Este PDF está protegido con contraseña",
+            description: "Introduce la contraseña para abrir este archivo.",
+            incorrect: "Contraseña incorrecta. Inténtalo de nuevo.",
+            label: "Contraseña",
+            submit: "Desbloquear",
+            cancel: "Cancelar",
         }
     },
     ru: {
@@ -216,6 +261,7 @@ export const translations = {
             cancel: "Отмена",
             processing: "Обработка...",
             download: "Скачать результат",
+            splitFailed: "Не удалось обработать PDF. Проверьте файл и попробуйте снова.",
         },
         items: {
             page: "Страница {n}",
@@ -239,6 +285,14 @@ export const translations = {
             description: "Отсканируйте QR-код, чтобы добавить меня в WeChat.",
             qrAlt: "QR-код WeChat",
             close: "Закрыть",
+        },
+        password: {
+            title: "Этот PDF защищён паролем",
+            description: "Введите пароль для открытия файла.",
+            incorrect: "Неверный пароль. Попробуйте ещё раз.",
+            label: "Пароль",
+            submit: "Открыть",
+            cancel: "Отмена",
         }
     }
 };

@@ -1,4 +1,32 @@
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument } from '@cantoo/pdf-lib';
+
+// @cantoo/pdf-lib throws a plain Error for password failures.
+// These messages are the only signal. Keep the package version pinned.
+const PASSWORD_ERROR_MESSAGES = new Set(['NEEDS PASSWORD', 'Password incorrect']);
+
+/** Thrown when the PDF needs a password, or the given password is incorrect. */
+export class PdfPasswordError extends Error {
+    constructor() {
+        super('The PDF needs a correct password.');
+        this.name = 'PdfPasswordError';
+    }
+}
+
+/**
+ * Loads a PDF and decrypts it when it is encrypted.
+ * An empty password opens unencrypted files and files with only an owner password.
+ * The decrypted document keeps no encryption and no permission restrictions.
+ */
+export async function loadPdfDocument(bytes: ArrayBuffer | Uint8Array, password = ''): Promise<PDFDocument> {
+    try {
+        return await PDFDocument.load(bytes, { password });
+    } catch (error) {
+        if (error instanceof Error && PASSWORD_ERROR_MESSAGES.has(error.message)) {
+            throw new PdfPasswordError();
+        }
+        throw error;
+    }
+}
 
 export type SplitMode = 2 | 3;
 export type PageSplitConfig = { mode: SplitMode; splitPoints: number[] };
@@ -66,11 +94,13 @@ function getVisualSplitSegments(
  * Splits a PDF file based on the provided page split configs.
  * @param file The original PDF file.
  * @param splitConfigs A map of page number (1-based) to split mode and split points.
+ * @param password The password that opens the original PDF. Use an empty string when no password is known.
  * @returns The generated PDF bytes.
+ * @throws PdfPasswordError when the password is missing or incorrect.
  */
-export async function splitPDF(file: File, splitConfigs: Record<number, PageSplitConfig>): Promise<Uint8Array> {
+export async function splitPDF(file: File, splitConfigs: Record<number, PageSplitConfig>, password = ''): Promise<Uint8Array> {
     const fileArrayBuffer = await file.arrayBuffer();
-    const pdfDoc = await PDFDocument.load(fileArrayBuffer);
+    const pdfDoc = await loadPdfDocument(fileArrayBuffer, password);
     const newPdfDoc = await PDFDocument.create();
 
     const pageCount = pdfDoc.getPageCount();

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import UploadZone from "./UploadZone";
 import PageSplitter from "./PageSplitter";
-import { PageSplitConfig, SplitMode, splitPDF } from "@/lib/pdf-processing";
-import { pdfjs, Document } from "react-pdf";
+import { PageSplitConfig, PdfPasswordError, SplitMode, splitPDF } from "@/lib/pdf-processing";
+import { pdfjs, Document, PasswordResponses } from "react-pdf";
 import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import { Loader2 } from "lucide-react";
@@ -12,6 +12,7 @@ import { LanguageProvider, useLanguage } from "./LanguageContext";
 import LanguageSelector from "./LanguageSelector";
 import { getSplitOutputFilename } from "@/lib/upload-validation";
 import WeChatContact from "./WeChatContact";
+import PasswordDialog from "./PasswordDialog";
 
 // Configure worker locally
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -21,12 +22,59 @@ const floatingToolbarClass = "sticky top-4 z-40 flex flex-col sm:flex-row justif
 const secondaryButtonClass = "text-sm text-muted-copy hover:text-brand font-medium px-3 py-2 rounded-lg hover:bg-panel transition-colors";
 const primaryButtonClass = "bg-brand hover:bg-primary-hover text-page px-5 py-2.5 rounded-lg text-sm font-medium shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-[background-color,box-shadow,transform] active:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2";
 
+type OnPasswordCallback = (password: string | null) => void;
+
+type PasswordRequest = {
+    key: number;
+    isIncorrect: boolean;
+    resolve: (password: string | null) => void;
+};
+
 function PDFSplitEditorContent() {
     const { t } = useLanguage();
     const [file, setFile] = useState<File | null>(null);
     const [numPages, setNumPages] = useState<number>(0);
     const [splitConfigs, setSplitConfigs] = useState<Record<number, PageSplitConfig>>({});
     const [isProcessing, setIsProcessing] = useState(false);
+    const [passwordRequest, setPasswordRequest] = useState<PasswordRequest | null>(null);
+    // The last password given for the current file. After the preview loads, this is the correct password.
+    const passwordRef = useRef("");
+    const passwordRequestCountRef = useRef(0);
+
+    const selectFile = useCallback((nextFile: File | null) => {
+        passwordRef.current = "";
+        setPasswordRequest(null);
+        setFile(nextFile);
+    }, []);
+
+    // Shows the password dialog. Resolves with the password, or with null when the user cancels.
+    const requestPassword = useCallback((isIncorrect: boolean) => {
+        return new Promise<string | null>((resolve) => {
+            passwordRequestCountRef.current += 1;
+            setPasswordRequest({ key: passwordRequestCountRef.current, isIncorrect, resolve });
+        });
+    }, []);
+
+    const closePasswordDialog = useCallback((password: string | null) => {
+        passwordRequest?.resolve(password);
+        setPasswordRequest(null);
+    }, [passwordRequest]);
+
+    const cancelPasswordDialog = useCallback(() => closePasswordDialog(null), [closePasswordDialog]);
+
+    // react-pdf keeps the first instance of this handler for the whole load. Use only stable values here.
+    const handlePreviewPassword = useCallback((callback: OnPasswordCallback, reason: number) => {
+        void requestPassword(reason === PasswordResponses.INCORRECT_PASSWORD).then((password) => {
+            if (password === null) {
+                // pdf.js stops the load when it gets an Error. A null value makes pdf.js ask again.
+                (callback as unknown as (value: Error) => void)(new Error("Password entry cancelled."));
+                selectFile(null);
+                return;
+            }
+            passwordRef.current = password;
+            callback(password);
+        });
+    }, [requestPassword, selectFile]);
 
     function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
         setNumPages(numPages);
@@ -69,7 +117,19 @@ function PDFSplitEditorContent() {
         if (!file) return;
         setIsProcessing(true);
         try {
-            const newPdfBytes = await splitPDF(file, splitConfigs);
+            let newPdfBytes: Uint8Array;
+            // The preview usually supplies the password. Ask again only if pdf-lib rejects it.
+            for (;;) {
+                try {
+                    newPdfBytes = await splitPDF(file, splitConfigs, passwordRef.current);
+                    break;
+                } catch (error) {
+                    if (!(error instanceof PdfPasswordError)) throw error;
+                    const password = await requestPassword(passwordRef.current !== "");
+                    if (password === null) return;
+                    passwordRef.current = password;
+                }
+            }
             const pdfBytes = new Uint8Array(newPdfBytes);
             const blob = new Blob([pdfBytes.buffer], { type: "application/pdf" });
             const url = URL.createObjectURL(blob);
@@ -82,7 +142,7 @@ function PDFSplitEditorContent() {
             URL.revokeObjectURL(url);
         } catch (error) {
             console.error("Error splitting PDF:", error);
-            alert(t.upload.alert);
+            alert(t.actions.splitFailed);
         } finally {
             setIsProcessing(false);
         }
@@ -99,7 +159,7 @@ function PDFSplitEditorContent() {
             </div>
 
             {!file ? (
-                <UploadZone onFileSelect={setFile} />
+                <UploadZone onFileSelect={selectFile} />
             ) : (
                 <div className="space-y-6">
                     <div className={floatingToolbarClass}>
@@ -115,7 +175,7 @@ function PDFSplitEditorContent() {
 
                         <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
                             <button
-                                onClick={() => setFile(null)}
+                                onClick={() => selectFile(null)}
                                 className={secondaryButtonClass}
                                 disabled={isProcessing}
                             >
@@ -143,6 +203,7 @@ function PDFSplitEditorContent() {
                         <Document
                             file={file}
                             onLoadSuccess={onDocumentLoadSuccess}
+                            onPassword={handlePreviewPassword}
                             className="flex flex-col gap-8 w-full"
                             loading={
                                 <div className="p-12 text-center text-muted-copy animate-pulse">
@@ -171,6 +232,15 @@ function PDFSplitEditorContent() {
             )}
 
             <WeChatContact />
+
+            {passwordRequest && (
+                <PasswordDialog
+                    key={passwordRequest.key}
+                    isIncorrect={passwordRequest.isIncorrect}
+                    onSubmit={closePasswordDialog}
+                    onCancel={cancelPasswordDialog}
+                />
+            )}
         </div>
     );
 }

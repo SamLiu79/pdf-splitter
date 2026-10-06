@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument } from '@cantoo/pdf-lib';
 import { splitPDF } from '../lib/pdf-processing.ts';
 
 const sourcePdf = await PDFDocument.create();
